@@ -15,6 +15,7 @@ python manage.py runserver
 Эндпоинты
 /api/ — корень DRF
 
+
 /api/courses/ — CRUD курсов (ViewSet)
 
 /api/lessons/ — список/создание уроков (Generic)

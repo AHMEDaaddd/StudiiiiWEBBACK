@@ -1,0 +1,72 @@
+{
+  "info": {
+    "name": "edusite API (SkyPro)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Courses - List",
+      "request": { "method": "GET", "url": "http://127.0.0.1:8000/api/courses/" }
+    },
+    {
+      "name": "Courses - Create",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Python 101\",\n  \"description\": \"Intro to DRF\"\n}"
+        },
+        "url": "http://127.0.0.1:8000/api/courses/"
+      }
+    },
+    {
+      "name": "Courses - Retrieve (id=1)",
+      "request": { "method": "GET", "url": "http://127.0.0.1:8000/api/courses/1/" }
+    },
+    {
+      "name": "Courses - Update (id=1)",
+      "request": {
+        "method": "PATCH",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"Обновлено через Postman\"\n}"
+        },
+        "url": "http://127.0.0.1:8000/api/courses/1/"
+      }
+    },
+    {
+      "name": "Lessons - List",
+      "request": { "method": "GET", "url": "http://127.0.0.1:8000/api/lessons/" }
+    },
+    {
+      "name": "Lessons - Create",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"course\": 1,\n  \"title\": \"Установка окружения\",\n  \"description\": \"venv, poetry, зависимости\",\n  \"video_url\": \"https://youtu.be/dQw4w9WgXcQ\"\n}"
+        },
+        "url": "http://127.0.0.1:8000/api/lessons/"
+      }
+    },
+    {
+      "name": "Users - Create",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@example.com\",\n  \"username\": \"student\",\n  \"phone\": \"+79001234567\",\n  \"city\": \"Derbent\"\n}"
+        },
+        "url": "http://127.0.0.1:8000/api/users/"
+      }
+    },
+    {
+      "name": "Users - List",
+      "request": { "method": "GET", "url": "http://127.0.0.1:8000/api/users/" }
+    }
+  ]
+}
