@@ -2,7 +2,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "dev-secret-key"  # для учебных целей
+SECRET_KEY = "dev-secret-key"
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -14,10 +14,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # DRF
+
     "rest_framework",
 
-    # наши приложения
+
     "users",
     "lms",
 ]
@@ -59,7 +59,7 @@ DATABASES = {
     }
 }
 
-AUTH_PASSWORD_VALIDATORS = []  # на ДЗ не заморачиваемся
+AUTH_PASSWORD_VALIDATORS = []
 
 LANGUAGE_CODE = "ru-ru"
 TIME_ZONE = "Europe/Moscow"
@@ -72,10 +72,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# >>> ВАЖНО: наш кастомный юзер <<<
+
 AUTH_USER_MODEL = "users.User"
 
-# DRF — на этапе ДЗ разрешаем всё (чтобы не было 403)
+
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny"
