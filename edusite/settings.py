@@ -2,7 +2,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "dev-secret-key"  # для учебных целей
+SECRET_KEY = "dev-secret-key"
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -13,11 +13,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    # DRF
     "rest_framework",
-
-    # наши приложения
+    "django_filters",
     "users",
     "lms",
 ]
@@ -37,7 +34,7 @@ ROOT_URLCONF = "edusite.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],  # если используешь home.html
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -59,7 +56,7 @@ DATABASES = {
     }
 }
 
-AUTH_PASSWORD_VALIDATORS = []  # на ДЗ не заморачиваемся
+AUTH_PASSWORD_VALIDATORS = []
 
 LANGUAGE_CODE = "ru-ru"
 TIME_ZONE = "Europe/Moscow"
@@ -72,12 +69,19 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# >>> ВАЖНО: наш кастомный юзер <<<
+# наш кастомный юзер
 AUTH_USER_MODEL = "users.User"
 
-# DRF — на этапе ДЗ разрешаем всё (чтобы не было 403)
+# DRF (безопасность пока AllowAny по ТЗ)
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny"
-    ]
+    ],
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.OrderingFilter",
+        "rest_framework.filters.SearchFilter",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
 }
