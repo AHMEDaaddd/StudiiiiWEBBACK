@@ -1,17 +1,94 @@
 from rest_framework import viewsets, generics
+from rest_framework.permissions import IsAuthenticated
+
 from .models import Course, Lesson
 from .serializers import CourseSerializer, LessonSerializer
+from users.permissions import IsModer, IsOwner
+
 
 # --- КУРСЫ: ViewSet (CRUD) ---
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all().order_by("id")
     serializer_class = CourseSerializer
 
+    def get_queryset(self):
+        """
+        Модератор (и staff/superuser) видит все курсы.
+        Обычный пользователь — только свои.
+        """
+        qs = super().get_queryset()
+        user = self.request.user
+        if not user.is_authenticated:
+            return qs.none()
+
+        from users.permissions import is_moderator
+
+        if is_moderator(user):
+            return qs
+        return qs.filter(owner=user)
+
+    def perform_create(self, serializer):
+        """
+        При создании курса привязываем владельца.
+        """
+        serializer.save(owner=self.request.user)
+
+    def get_permissions(self):
+        """
+        Разграничение прав по action:
+
+        - create: обычные пользователи (НЕ модераторы)
+        - list/retrieve/update/partial_update: модератор или владелец
+        - destroy: только владелец и НЕ модератор
+        """
+        if self.action == "create":
+            permission_classes = [IsAuthenticated, ~IsModer]
+        elif self.action in ["list", "retrieve", "update", "partial_update"]:
+            permission_classes = [IsAuthenticated, IsModer | IsOwner]
+        elif self.action == "destroy":
+            permission_classes = [IsAuthenticated, ~IsModer, IsOwner]
+        else:
+            permission_classes = [IsAuthenticated]
+
+        return [perm() for perm in permission_classes]
+
+
 # --- УРОКИ: Generic (CRUD) ---
 class LessonListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Lesson.objects.all().order_by("id")
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Модератор видит все уроки, обычный пользователь — только свои.
+        """
+        qs = Lesson.objects.all().order_by("id")
+        user = self.request.user
+        if not user.is_authenticated:
+            return qs.none()
+
+        from users.permissions import is_moderator
+
+        if is_moderator(user):
+            return qs
+        return qs.filter(owner=user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def get_permissions(self):
+        # GET (list) — модератор или владелец (фильтр по queryset)
+        # POST (create) — только НЕ модератор
+        if self.request.method == "GET":
+            permission_classes = [IsAuthenticated]  # фильтр по get_queryset
+        elif self.request.method == "POST":
+            permission_classes = [IsAuthenticated, ~IsModer]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [perm() for perm in permission_classes]
+
 
 class LessonRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated, IsModer | IsOwner]

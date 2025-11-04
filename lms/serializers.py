@@ -7,7 +7,7 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = ["id", "course", "title", "description", "preview", "video_url"]
 
 class CourseSerializer(serializers.ModelSerializer):
-    # по желанию можно показать количество уроков:
+
     lessons_count = serializers.IntegerField(source="lessons.count", read_only=True)
 
     class Meta:
