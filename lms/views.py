@@ -41,13 +41,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_permissions(self):
-        """
-        Разграничение прав по action:
 
-        - create: обычные пользователи (НЕ модераторы)
-        - list/retrieve/update/partial_update: модератор или владелец
-        - destroy: только владелец и НЕ модератор
-        """
         if self.action == "create":
             permission_classes = [IsAuthenticated, ~IsModer]
         elif self.action in ["list", "retrieve", "update", "partial_update"]:
@@ -85,8 +79,7 @@ class LessonListCreateAPIView(generics.ListCreateAPIView):
         serializer.save(owner=self.request.user)
 
     def get_permissions(self):
-        # GET (list) — модератор или владелец (фильтр по queryset)
-        # POST (create) — только НЕ модератор
+
         if self.request.method == "GET":
             permission_classes = [IsAuthenticated]  # фильтр по get_queryset
         elif self.request.method == "POST":
@@ -103,10 +96,7 @@ class LessonRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CourseSubscriptionAPIView(APIView):
-    """
-    POST: переключает подписку пользователя на курс.
-    URL: /api/courses/<course_id>/subscription/
-    """
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request, course_id: int, *args, **kwargs):
