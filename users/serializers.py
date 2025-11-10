@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, Payment
+from .models import Payment, User
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -60,6 +60,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Детальный профиль (для владельца): с историей платежей.
     """
+
     payments = PaymentSerializer(many=True, read_only=True)
 
     class Meta:
@@ -82,6 +83,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     Сериализатор регистрации пользователя.
     Пароль — write_only, создаём пользователя через create_user.
     """
+
     password = serializers.CharField(write_only=True)
 
     class Meta:

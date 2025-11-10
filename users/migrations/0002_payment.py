@@ -9,26 +9,80 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lms', '0002_course_owner_lesson_owner'),
-        ('users', '0001_initial'),
+        ("lms", "0002_course_owner_lesson_owner"),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Payment',
+            name="Payment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('paid_at', models.DateTimeField(default=django.utils.timezone.now, verbose_name='дата оплаты')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='сумма оплаты')),
-                ('method', models.CharField(choices=[('cash', 'Наличные'), ('transfer', 'Перевод на счёт')], default='transfer', max_length=20, verbose_name='способ оплаты')),
-                ('course', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='lms.course', verbose_name='оплаченный курс')),
-                ('lesson', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='lms.lesson', verbose_name='оплаченный урок')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payments', to=settings.AUTH_USER_MODEL, verbose_name='пользователь')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "paid_at",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name="дата оплаты"
+                    ),
+                ),
+                (
+                    "amount",
+                    models.DecimalField(
+                        decimal_places=2, max_digits=10, verbose_name="сумма оплаты"
+                    ),
+                ),
+                (
+                    "method",
+                    models.CharField(
+                        choices=[("cash", "Наличные"), ("transfer", "Перевод на счёт")],
+                        default="transfer",
+                        max_length=20,
+                        verbose_name="способ оплаты",
+                    ),
+                ),
+                (
+                    "course",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="payments",
+                        to="lms.course",
+                        verbose_name="оплаченный курс",
+                    ),
+                ),
+                (
+                    "lesson",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="payments",
+                        to="lms.lesson",
+                        verbose_name="оплаченный урок",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="payments",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="пользователь",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'платёж',
-                'verbose_name_plural': 'платежи',
-                'ordering': ['-paid_at'],
+                "verbose_name": "платёж",
+                "verbose_name_plural": "платежи",
+                "ordering": ["-paid_at"],
             },
         ),
     ]

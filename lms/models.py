@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 
 
-
 class Course(models.Model):
     title = models.CharField(max_length=255)
     preview = models.ImageField(upload_to="courses/", blank=True, null=True)
@@ -43,6 +42,7 @@ class Subscription(models.Model):
     """
     Подписка пользователя на обновления курса.
     """
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

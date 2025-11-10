@@ -1,15 +1,11 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .models import User, Payment
-from .serializers import (
-    UserSerializer,
-    UserPublicSerializer,
-    UserRegistrationSerializer,
-    PaymentSerializer,
-)
 from .filters import PaymentFilter
+from .models import Payment, User
 from .permissions import IsSelf
+from .serializers import (PaymentSerializer, UserPublicSerializer,
+                          UserRegistrationSerializer, UserSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,6 +19,7 @@ class UserViewSet(viewsets.ModelViewSet):
         * чужой профиль — только публичные поля
     - PUT/PATCH/DELETE — только владелец своего профиля.
     """
+
     queryset = User.objects.all().order_by("id")
 
     def get_permissions(self):
@@ -44,7 +41,9 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             # если пользователь запрашивает сам себя — детальный
             request_user = self.request.user
-            if request_user.is_authenticated and str(request_user.pk) == str(self.kwargs.get("pk")):
+            if request_user.is_authenticated and str(request_user.pk) == str(
+                self.kwargs.get("pk")
+            ):
                 return UserSerializer
             return UserPublicSerializer
         # обновление/удаление — всегда детальный (но IsSelf ограничит доступ)
@@ -56,11 +55,8 @@ class PaymentViewSet(viewsets.ModelViewSet):
     Список/детально платежей с фильтрацией и сортировкой.
     Доступ только для авторизованных пользователей.
     """
-    queryset = (
-        Payment.objects
-        .select_related("user", "course", "lesson")
-        .all()
-    )
+
+    queryset = Payment.objects.select_related("user", "course", "lesson").all()
     serializer_class = PaymentSerializer
     filterset_class = PaymentFilter
     ordering_fields = ["paid_at", "amount"]

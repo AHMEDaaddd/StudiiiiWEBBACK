@@ -1,15 +1,13 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, viewsets
-from .models import Course, Lesson, Subscription
-from .serializers import CourseSerializer, LessonSerializer
-from .paginators import CoursePagination, LessonPagination
-from users.permissions import IsOwner, IsModer
-from rest_framework.views import APIView
+from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import get_object_or_404
-from .models import Course, Subscription
+from rest_framework.views import APIView
+
+from lms.models import Course, Lesson, Subscription
+from lms.paginators import CoursePagination, LessonPagination
+from lms.serializers import CourseSerializer, LessonSerializer
+from users.permissions import IsModer, IsOwner
 
 
 # --- КУРСЫ: ViewSet (CRUD) ---

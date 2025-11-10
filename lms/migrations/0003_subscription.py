@@ -8,23 +8,52 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lms', '0002_course_owner_lesson_owner'),
+        ("lms", "0002_course_owner_lesson_owner"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Subscription',
+            name="Subscription",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='дата подписки')),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='subscriptions', to='lms.course', verbose_name='курс')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='course_subscriptions', to=settings.AUTH_USER_MODEL, verbose_name='пользователь')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="дата подписки"
+                    ),
+                ),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subscriptions",
+                        to="lms.course",
+                        verbose_name="курс",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="course_subscriptions",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="пользователь",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'подписка на курс',
-                'verbose_name_plural': 'подписки на курсы',
-                'unique_together': {('user', 'course')},
+                "verbose_name": "подписка на курс",
+                "verbose_name_plural": "подписки на курсы",
+                "unique_together": {("user", "course")},
             },
         ),
     ]

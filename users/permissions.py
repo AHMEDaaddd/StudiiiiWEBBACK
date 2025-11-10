@@ -1,6 +1,5 @@
 from rest_framework.permissions import BasePermission
 
-
 MODERATOR_GROUP_NAMES = ["moderators", "Модераторы"]
 
 
@@ -31,10 +30,8 @@ class IsOwner(BasePermission):
         if not user.is_authenticated:
             return False
 
-
         if hasattr(obj, "owner"):
             return obj.owner == user
-
 
         if hasattr(obj, "user"):
             return obj.user == user

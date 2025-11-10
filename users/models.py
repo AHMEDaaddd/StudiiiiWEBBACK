@@ -2,10 +2,12 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 
+
 class User(AbstractUser):
     """
     Кастомный юзер с авторизацией по email.
     """
+
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=30, blank=True)
     city = models.CharField(max_length=100, blank=True)
