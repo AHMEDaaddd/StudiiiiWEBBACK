@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from .models import Course, Lesson, Subscription
 from .validators import validate_youtube_url
+from rest_framework import serializers
+from .models import Payment
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -37,3 +39,16 @@ class CourseSerializer(serializers.ModelSerializer):
         if not user or not user.is_authenticated:
             return False
         return Subscription.objects.filter(user=user, course=obj).exists()
+
+class PaymentCreateSerializer(serializers.Serializer):
+    course_id = serializers.IntegerField()
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = [
+            "id", "course", "amount", "currency",
+            "status", "stripe_session_id", "stripe_checkout_url",
+            "created_at",
+        ]
+        read_only_fields = fields

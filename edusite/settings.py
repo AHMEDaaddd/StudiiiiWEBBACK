@@ -1,6 +1,14 @@
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_CURRENCY = os.getenv("STRIPE_CURRENCY", "usd")
+FRONTEND_SUCCESS_URL = os.getenv("FRONTEND_SUCCESS_URL", "http://127.0.0.1:8000/success")
+FRONTEND_CANCEL_URL = os.getenv("FRONTEND_CANCEL_URL", "http://127.0.0.1:8000/cancel")
 
 SECRET_KEY = "dev-secret-key"
 DEBUG = True
@@ -9,10 +17,12 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
+    "drf_spectacular",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "drf_spectacular_sidecar",
     "rest_framework",
     "users",
     "lms",
@@ -76,6 +86,7 @@ REST_FRAMEWORK = {
     # JWT-авторизация по умолчанию
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+
     ],
     # ВСЕ эндпоинты по умолчанию только для авторизованных
     "DEFAULT_PERMISSION_CLASSES": [
@@ -88,4 +99,15 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
+
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "StudiWeb LMS API",
+    "DESCRIPTION": "Документация LMS: курсы, уроки, подписки, оплаты (Stripe).",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SERVE_PERMISSIONS": [],
 }
