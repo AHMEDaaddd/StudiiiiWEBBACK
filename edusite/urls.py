@@ -15,6 +15,7 @@ from drf_spectacular.views import (
     SpectacularRedocView,
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.views.generic import RedirectView
 
 router = DefaultRouter()
 router.register(r"courses", CourseViewSet, basename="course")
@@ -22,6 +23,7 @@ router.register(r"users", UserViewSet, basename="user")
 router.register(r"payments", PaymentViewSet, basename="payment")
 
 urlpatterns = [
+    path("", RedirectView.as_view(url="/api/docs/", permanent=False)),
     path("admin/", admin.site.urls),
     path("api/", include("lms.urls")),
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
