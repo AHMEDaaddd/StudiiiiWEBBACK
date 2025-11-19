@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from celery.schedules import crontab
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -9,6 +10,11 @@ STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_CURRENCY = os.getenv("STRIPE_CURRENCY", "usd")
 FRONTEND_SUCCESS_URL = os.getenv("FRONTEND_SUCCESS_URL", "http://127.0.0.1:8000/success")
 FRONTEND_CANCEL_URL = os.getenv("FRONTEND_CANCEL_URL", "http://127.0.0.1:8000/cancel")
+
+
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+REDIS_DB = os.getenv("REDIS_DB", "0")
 
 SECRET_KEY = "dev-secret-key"
 DEBUG = True
@@ -72,9 +78,44 @@ TIME_ZONE = "Europe/Moscow"
 USE_I18N = True
 USE_TZ = True
 
+# --- Celery + celery-beat ---
+
+# Брокер и бэкенд для задач Celery (через Redis)
+CELERY_BROKER_URL = os.getenv(
+    "CELERY_BROKER_URL",
+    f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}",
+)
+CELERY_RESULT_BACKEND = os.getenv(
+    "CELERY_RESULT_BACKEND",
+    CELERY_BROKER_URL,
+)
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+
+#timezone Celery = timezone Django
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = False
+
+#блокировка неактивных пользователей
+CELERY_BEAT_SCHEDULE = {
+    "deactivate-inactive-users-daily": {
+        "task": "lms.tasks.deactivate_inactive_users_task",
+        # каждый день в 03:00 по TIME_ZONE
+        "schedule": crontab(hour=3, minute=0),
+    },
+}
+
 STATIC_URL = "static/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND",
+    "django.core.mail.backends.console.EmailBackend",
+)
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "no-reply@example.com")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

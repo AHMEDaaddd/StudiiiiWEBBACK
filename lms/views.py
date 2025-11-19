@@ -11,6 +11,10 @@ from lms.paginators import CoursePagination, LessonPagination
 from lms.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModer, IsOwner
 
+from lms.tasks import (
+    send_course_update_email_task,
+    send_lesson_update_email_if_needed_task,
+)
 
 # --- КУРСЫ: ViewSet (CRUD) ---
 @extend_schema(
@@ -25,6 +29,17 @@ class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all().order_by("id")
     serializer_class = CourseSerializer
     pagination_class = CoursePagination
+
+
+    def perform_update(self, serializer):
+        """
+        При обновлении курса сохраняем изменения и запускаем Celery-задачу
+        по уведомлению подписчиков.
+        """
+        course = serializer.save()
+        # Асинхронная отправка писем
+        send_course_update_email_task.delay(course.pk)
+
 
     def get_queryset(self):
         """
@@ -117,6 +132,15 @@ class LessonRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
+
+    def perform_update(self, serializer):
+        """
+        При обновлении отдельного урока запускаем Celery-задачу.
+        Уведомление уйдёт, только если курс не "обновлялся"
+        (не рассылались уведомления) более 4 часов.
+        """
+        lesson = serializer.save()
+        send_lesson_update_email_if_needed_task.delay(lesson.pk)
 
 
 class CourseSubscriptionAPIView(APIView):

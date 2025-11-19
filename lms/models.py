@@ -20,6 +20,13 @@ class Course(models.Model):
         verbose_name="владелец",
     )
 
+    last_notification_sent_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="дата последнего уведомления по курсу",
+    )
+
+
     def __str__(self):
         return self.title
 
