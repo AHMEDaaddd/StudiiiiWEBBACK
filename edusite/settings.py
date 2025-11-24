@@ -101,7 +101,7 @@ CELERY_ENABLE_UTC = False
 #блокировка неактивных пользователей
 CELERY_BEAT_SCHEDULE = {
     "deactivate-inactive-users-daily": {
-        "task": "lms.tasks.deactivate_inactive_users_task",
+        "task": "users.tasks.deactivate_inactive_users_task",
         # каждый день в 03:00 по TIME_ZONE
         "schedule": crontab(hour=3, minute=0),
     },

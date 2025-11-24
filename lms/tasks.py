@@ -110,20 +110,3 @@ def send_lesson_update_email_if_needed_task(lesson_id: int) -> int:
 
     return len(recipients)
 
-
-@shared_task
-def deactivate_inactive_users_task() -> int:
-    """
-    Задание 3.
-    Блокирует (is_active=False) пользователей, которые не заходили более месяца.
-    Запускается периодически через celery-beat.
-    """
-    User = get_user_model()
-    now = timezone.now()
-    threshold = now - timedelta(days=30)
-
-    # last_login старше месяца (и не None) и пользователь активен
-    qs = User.objects.filter(is_active=True, last_login__lt=threshold)
-    updated = qs.update(is_active=False)
-
-    return updated
